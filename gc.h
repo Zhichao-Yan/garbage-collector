@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <setjmp.h>
+#include <string.h>
 
 enum flag{
   GC_MARK = 0x01,

@@ -1,6 +1,13 @@
 #include "gc.h"
 #define GC_PRIMES_COUNT 24
 
+static void gc_mark_ptr(gc_t *gc, void *ptr);
+static size_t gc_hash(void *ptr);
+static size_t gc_offset(gc_t *gc, size_t i, size_t h);
+static void gc_adjust_slots(gc_t *gc);
+static gc_ptr_t *gc_get_item(gc_t *gc, void *ptr);
+static void gc_insert_item(gc_t *gc, void *ptr, size_t size, int flags, void (*dtor)(void *));
+
 static const size_t gc_primes[GC_PRIMES_COUNT] = {
     0, 1, 5, 11,
     23, 53, 101, 197,
@@ -340,7 +347,7 @@ static void gc_rehash(gc_t *gc, size_t new_size)
     {
         gc->slots_cnt = old_size;
         gc->items = old_items;
-        return 0;
+        return;
     }
 
     for (size_t i = 0; i < old_size; i++)
@@ -548,6 +555,7 @@ void *gc_realloc(gc_t *gc, void *ptr, size_t size)
             }
         }
     }
+    return NULL;
 }
 
 /* get the gc_ptr_t from gc->items according to ptr */
